@@ -1,0 +1,40 @@
+version: '3'
+services:
+  app:
+    build:
+      context: ./docker/webserver
+      dockerfile: ./docker/webserver/dockerfile
+    image: webserver:latest
+    networks: 
+      - appnet
+    volumes: 
+      - ./application:/var/www/html/public
+    ports:
+      - 80:80
+  cache:
+    image: redis:alpine
+    networks: 
+      - appnet
+    volumes: 
+      - cachedata:/data
+  db:
+    image: mysql:5.7
+    environment: 
+      MYSQL_ROOT_PASSWORD: 123123
+      MYSQL_DATABASE: homestead
+      MYSQL_USER: homestead
+      MYSQL_PASSWORD: 123123
+    networks:
+      - appnet
+    ports: 
+      - 3307:3306
+    volumes: 
+      - dbdata:/var/lib/mysql
+networks: 
+  appnet:
+    driver: bridge
+volumes: 
+  dbdata:
+    driver: local
+  cachedata:
+    driver: local
